@@ -1,8 +1,10 @@
 name: NodeJS Matrix Starter
 
 on:
- pull_request: [main]
- push: [main]
+  push:
+    branches: [ $default-branch ]
+  pull_request:
+    branches: [ $default-branch ]
  
 jobs:
   must-work:
