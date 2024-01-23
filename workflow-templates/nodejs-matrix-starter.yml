@@ -8,7 +8,7 @@ jobs:
   must-work:
     outputs:
       success: ${{steps.must-have.outcome == 'success' }}
-    runs-on: [gh-cloud-latest-linux]
+    runs-on: [ubuntu-latest]
     steps:
       - uses: actions/checkout@v4
       - name: Cache nodeJS dependencies
@@ -39,7 +39,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [gh-cloud-latest-linux]
+        os: [ubuntu-latest]
         nodejs: [16.x,17.x,18.x,19.x,20.x]
     steps:
       - uses : actions/checkout@v4
