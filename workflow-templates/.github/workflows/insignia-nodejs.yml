@@ -1,0 +1,67 @@
+name: NodeJS Matrix Starter
+
+on:
+ pull_request: [main]
+ push: [main]
+ 
+jobs:
+  must-work:
+    outputs:
+      success: ${{steps.must-have.outcome == 'success' }}
+    runs-on: [ubuntu-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Cache nodeJS dependencies
+        uses: actions/cache@v4.0.0
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os}}-must-work-${{ hashFiles('**/package-lock.json')}}
+          restore-keys: | 
+            ${{ runner.os }}-must-work-
+      - name: Setup nodejs 20x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install
+      - name: Run tests
+        run: npm test
+      - id: must-have
+        run: echo "Windows 2023 and Nodejs 20.x combination successfully"
+ 
+  michael-job:
+    needs: [must-work]
+    if: ${{ needs.must-work.outputs.success }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        nodejs: [16.x,17.x,18.x,19.x,20.x]
+    steps:
+      - uses : actions/checkout@v4
+      - name: Cache nodeJS dependencies
+        uses: actions/cache@v4.0.0
+        with:
+          path: |
+            ~/.npm
+            **/node_modules
+          key: ${{ runner.os}}-node${{matrix.nodejs}}-${{ hashFiles('**/package-lock.json')}}
+          restore-keys: | 
+            ${{ runner.os }}-node${{matrix.nodejs}}-
+            
+      - name: Michael Builds Node.js ${{ matrix.nodejs }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{matrix.nodejs}}
+          cache: 'npm'
+      - name: Install dependencies
+        run:  npm install
+      - name: Run tests
+        run: npm test
+     
+        
+      
